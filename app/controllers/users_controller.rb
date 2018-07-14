@@ -5,16 +5,17 @@ class UsersController < ApplicationController
   end
 
   def new
+    @user = User.new
     render :new
   end
 
   def create
-    user = User.new(user_params)
-    exist = user.find_by(:username user.username)
+    @user = User.new(user_params)
+    exist = User.find_by(username: @user.username)
     if exist.nil?
-      if user.save
-        login(user)
-        redirect_to user_url(user)
+      if @user.save
+        login(@user)
+        redirect_to user_url(@user)
       else
         flash[:error] = "password or username invalid"
         redirect_to new_user_url
@@ -24,6 +25,8 @@ class UsersController < ApplicationController
       redirect_to new_user_url
     end
   end
+
+  private
 
   def user_params
     params.require(:user).permit(:username, :password)
